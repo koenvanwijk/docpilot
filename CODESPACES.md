@@ -5,7 +5,7 @@ DocPilot is al in deze GitHub-repository geïnstalleerd. GitHub Pages serveert a
 ## Eén keer instellen
 
 1. Maak in GitHub twee **Codespaces secrets** aan onder https://github.com/settings/codespaces en geef de repository `koenvanwijk/docpilot` toegang:
-   - `GITHUB_TOKEN`: een fine-grained GitHub PAT met **Contents: read/write** op uitsluitend de repository(s) die je wilt bewerken.
+   - `DOCPILOT_GITHUB_TOKEN`: een fine-grained GitHub PAT met **Contents: read/write** op uitsluitend de repository(s) die je wilt bewerken.
    - `AI_API_KEY`: je sleutel voor een OpenAI-compatible Chat Completions-provider.
 2. Optioneel: stel ook `AI_MODEL` en `AI_BASE_URL` als Codespaces secrets in (bijvoorbeeld `AI_MODEL=gpt-4.1-mini`). Standaard wordt de OpenAI API gebruikt.
 3. Ga naar https://github.com/koenvanwijk/docpilot → **Code → Codespaces → Create codespace on main**.
@@ -17,7 +17,7 @@ DocPilot is al in deze GitHub-repository geïnstalleerd. GitHub Pages serveert a
    ```
    Klik rechtsboven op **Toegang**, vul het wachtwoord in en klik op **Zoek bestanden**.
 
-**Het app-wachtwoord en alle API-sleutels mogen nooit in de repository, GitHub Pages, `public/config.js` of in een issue terechtkomen.** Codespaces secrets blijven server-side. Heb je al een `.env`, dan kun je deze lokaal in de Codespace aanmaken; `.gitignore` sluit het bestand uit.
+**Het app-wachtwoord en alle API-sleutels mogen nooit in de repository, GitHub Pages, `public/config.js` of in een issue terechtkomen.** Codespaces secrets blijven server-side. Het startscript vertaalt `DOCPILOT_GITHUB_TOKEN` naar de `GITHUB_TOKEN` die de Node-backend verwacht; de `GITHUB_` prefix is gereserveerd voor GitHub zelf. Heb je al een `.env`, dan kun je deze lokaal in de Codespace aanmaken; `.gitignore` sluit het bestand uit.
 
 ## Markdown bewerken
 
