@@ -4,6 +4,12 @@ Een **webgebaseerde, in-context Markdown-editor** die bestanden rechtstreeks uit
 
 Dit is een werkend **MVP voor persoonlijk / team-intern gebruik**, geen publieke SaaS. Frontend en server gebruiken uitsluitend Node.js 20+ en browser-JavaScript; **geen `npm install` nodig**. Voor de Markdown-rendering worden wel twee externe browserbibliotheken van jsDelivr geladen (Marked en DOMPurify).
 
+## Zonder lokale installatie: GitHub Codespaces
+
+[Start een Codespace](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=1446140440) in deze repository. De devcontainer start de DocPilot-backend automatisch met een private doorgestuurde poort (8787). Stel vooraf je Codespaces secrets `DOCPILOT_GITHUB_TOKEN` (Contents: read/write) en `AI_API_KEY` in; optioneel `AI_MODEL`. Haal in de Codespaces-terminal het automatisch gegenereerde app-wachtwoord op met `cat ~/.local/state/docpilot/app-password`.
+
+Zie [CODESPACES.md](CODESPACES.md) voor de volledige instructies. Dit is een sessiegebonden ontwikkelomgeving, **geen permanente hosting**. GitHub Pages blijft een statische frontend waarvoor een aparte HTTPS-backend nodig is.
+
 ## In 3 minuten starten
 
 1. Installeer Node.js 20 of nieuwer.
