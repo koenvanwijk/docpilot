@@ -1,0 +1,12 @@
+{
+  "name": "github-markdown-agent-editor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Browser-based, in-context GitHub Markdown editing with an AI agent and batched commits",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test"
+  },
+  "engines": { "node": ">=20" }
+}

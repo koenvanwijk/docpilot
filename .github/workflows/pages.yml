@@ -1,10 +1,13 @@
-name: Build and deploy DocPilot
+name: Deploy DocPilot to GitHub Pages
 on:
   push:
     branches: [main]
+    paths:
+      - 'public/**'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 concurrency:
@@ -18,21 +21,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: true
-      - name: Expand initial source archive (first run only)
-        if: ${{ hashFiles('bootstrap/*.txt') != '' }}
-        shell: bash
-        run: |
-          cat bootstrap/part*.txt | base64 --decode | tar -xzf -
-          rm -rf bootstrap
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
-          git commit -m "Add DocPilot application source"
-          git push origin HEAD:main
-      - name: Run tests
-        run: node --test
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:

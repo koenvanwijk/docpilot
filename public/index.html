@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d1524">
+  <meta name="description" content="Contextueel Markdown aanpassen in GitHub met een AI-agent, diff review en batch-commit.">
+  <title>DocPilot — GitHub Markdown Agent</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">D<span>↗</span></div>
+      <div class="brand-name">DocPilot <small>Markdown Agent</small></div>
+    </div>
+    <div class="topright">
+      <span class="status-label" id="connection-status">Backend controleren...</span>
+      <button class="subtle" id="password-toggle" title="Wachtwoord voor extern gehoste versie" hidden>Toegang</button>
+      <button class="subtle" id="demo-button">Demo openen</button>
+      <a class="help-link" href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank" rel="noopener noreferrer" title="GitHub-token instellen">?</a>
+    </div>
+  </header>
+  <div id="password-row" class="password-row" hidden>
+    <label for="app-password">App-wachtwoord</label>
+    <input type="password" id="app-password" placeholder="APP_PASSWORD uit .env" autocomplete="off">
+    <span>Alleen nodig wanneer de server met APP_PASSWORD is beveiligd. Niet opgeslagen.</span>
+  </div>
+  <div class="workspace">
+    <aside class="sidebar">
+      <div class="pane-label">WERKRUIMTE <span class="chevron">↘</span></div>
+      <div class="field"><label for="repo-owner">GitHub-gebruiker / organisatie</label><input id="repo-owner" value="koenvanwijk" spellcheck="false" autocomplete="off"></div>
+      <div class="field"><label for="repo-name">Repository</label><input id="repo-name" value="european-physical-ai-operations-reference-architecture" spellcheck="false" autocomplete="off"></div>
+      <div class="field"><label for="repo-branch">Branch</label><input id="repo-branch" value="main" spellcheck="false"></div>
+      <div class="row buttons-row">
+        <button id="files-button" class="button button-muted">Zoek bestanden</button>
+      </div>
+      <div class="divider"></div>
+      <div class="files-title"><span>MARKDOWN-BESTANDEN</span><span id="files-count">—</span></div>
+      <input id="file-filter" class="filter" placeholder="Filter op bestandsnaam…" spellcheck="false">
+      <div class="file-list" id="file-list"><div class="file-empty">Open een repository om .md-bestanden te zien.</div></div>
+      <div class="sidebar-bottom">
+        <span class="little-dot"></span> Eén bestand per commit · eerste versie
+      </div>
+    </aside>
+    <main class="main">
+      <div class="document-head">
+        <div class="document-title-row"><span class="breadcrumb-label">DOCUMENT</span><span id="unsaved-badge" class="unsaved-badge" hidden>● Concept gewijzigd</span></div>
+        <div class="path-row">
+          <input id="file-path" placeholder="docs/architecture.md" spellcheck="false" aria-label="Markdown-bestandspad">
+          <button class="button button-primary" id="load-button">Open bestand</button>
+        </div>
+        <div class="document-meta"><span id="doc-location">Nog geen document geladen</span><span id="doc-stats">—</span></div>
+      </div>
+      <div class="document-tools">
+        <div class="segmented" role="tablist" aria-label="Documentweergave">
+          <button class="tab active" data-view="preview">Gerenderd</button>
+          <button class="tab" data-view="diff">Wijzigingen</button>
+          <button class="tab" data-view="source">Broncode</button>
+        </div>
+        <div class="document-actions">
+          <button class="icon-button" id="undo-button" disabled title="Laatste wijziging ongedaan maken">↶ <span>Undo</span></button>
+          <button class="icon-button" id="redo-button" disabled title="Opnieuw toepassen">↷</button>
+        </div>
+      </div>
+      <div class="document-area" id="document-area">
+        <div id="empty-state" class="empty-state">
+          <div class="empty-icon">✦</div>
+          <h1>Van tekst naar gerichte verbetering</h1>
+          <p>Open een Markdown-bestand uit GitHub. Selecteer tekst in de gerenderde pagina en zeg tegen je agent wat beter moet.</p>
+          <div class="empty-steps"><span><b>01</b> Markeer tekst</span><span><b>02</b> Geef instructie</span><span><b>03</b> Commit samen</span></div>
+        </div>
+        <article id="md-preview" class="markdown-body" hidden aria-label="Gerenderd Markdown-document"></article>
+        <div id="diff-view" class="diff-view" hidden></div>
+        <textarea id="source-editor" class="source-editor" spellcheck="false" hidden aria-label="Markdown-broncode"></textarea>
+      </div>
+      <div class="bottom-bar"><span id="feedback-text">Selecteer een alinea of markeer tekst om de agent context te geven.</span><span id="line-info"></span></div>
+    </main>
+    <aside class="agent-panel">
+      <div class="agent-heading"><div class="agent-avatar">✳</div><div><strong>Redactie-agent</strong><small id="model-label">Contextueel verbeteren</small></div><span class="agent-live"></span></div>
+      <div class="agent-body">
+        <div class="section-kicker">SELECTIE</div>
+        <div id="selection-box" class="selection-box no-selection"><span id="selection-placeholder">Markeer een passage in het document, of klik op een alinea.</span><div id="selection-details" hidden><span id="selection-caption"></span><blockquote id="selection-quote"></blockquote></div></div>
+        <div class="section-kicker">SNELLE ACTIES</div>
+        <div class="quick-actions">
+          <button class="quick" data-prompt="Verwijder uitsluitend de geselecteerde woorden of zinnen; als het hele blok is geselecteerd, verwijder het hele blok. Houd omringende Markdown correct.">✕ <span>Haal dit weg</span></button>
+          <button class="quick" data-prompt="Maak dit korter en scherper, zonder essentiële betekenis te verliezen.">↘ <span>Verkort</span></button>
+          <button class="quick" data-prompt="Verdiep de uitleg: voeg relevante technische onderbouwing, nuances en implicaties toe.">↗ <span>Verdiep</span></button>
+          <button class="quick" data-prompt="Leg dit duidelijker uit voor een technisch geïnteresseerde lezer.">◎ <span>Leg uit</span></button>
+          <button class="quick" data-prompt="Vervang of verrijk de voorbeelden met betere, concrete en relevante voorbeelden.">⋯ <span>Andere voorbeelden</span></button>
+          <button class="quick" id="custom-replace">⇄ <span>Vervang door...</span></button>
+        </div>
+        <div class="section-kicker">JOUW INSTRUCTIE</div>
+        <textarea id="instruction" class="instruction" rows="5" placeholder="Bijvoorbeeld: benadruk de veiligheidsarchitectuur, gebruik een ISA-95 voorbeeld en houd het onder 100 woorden."></textarea>
+        <button class="button button-primary run-button" id="run-button" disabled><span id="run-label">Wijzig selectie</span><span>↗</span></button>
+        <div class="safety-note">De agent wijzigt alleen het geselecteerde Markdown-blok. Geen automatische push.</div>
+        <div class="divider"></div>
+        <div class="activity-heading"><div class="section-kicker">WIJZIGINGEN IN DIT CONCEPT</div><span id="activity-count">0</span></div>
+        <div class="activity" id="activity-list"><div class="activity-empty">Je wijzigingen verschijnen hier. Je kunt ze eerst bekijken en ongedaan maken.</div></div>
+      </div>
+      <div class="commit-panel">
+        <label for="commit-message">Commitbericht</label>
+        <input id="commit-message" value="docs: improve Markdown with AI editing" maxlength="200" spellcheck="false">
+        <button id="commit-button" class="button button-commit" disabled>Commit alle wijzigingen <span>↑</span></button>
+        <p id="commit-note">Pas meerdere passages aan en commit daarna alles in één keer.</p>
+      </div>
+    </aside>
+  </div>
+  <div role="status" aria-live="polite" class="toast" id="toast" hidden></div>
+  <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js" defer></script>
+  <script src="./config.js" defer></script>
+  <script src="./app.js" defer></script>
+</body>
+</html>
