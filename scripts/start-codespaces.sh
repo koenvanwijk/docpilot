@@ -4,6 +4,11 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+# GitHub reserves GITHUB_* secret names. Use a scoped Codespaces secret instead.
+if [[ -n "${DOCPILOT_GITHUB_TOKEN:-}" ]]; then
+  export GITHUB_TOKEN="$DOCPILOT_GITHUB_TOKEN"
+fi
+
 export HOST=0.0.0.0
 export PORT="${PORT:-8787}"
 
@@ -36,7 +41,7 @@ echo "$server_pid" > "$state_dir/server.pid"
 for i in {1..20}; do
   if curl -fsS "http://127.0.0.1:${PORT}/api/health" > /dev/null 2>&1; then
     echo "DocPilot draait op poort ${PORT}. Open de privé-forwarded port via Codespaces → Ports."
-    echo "Stel GITHUB_TOKEN en AI_API_KEY in via GitHub Codespaces secrets of een lokale .env."
+    echo "Stel DOCPILOT_GITHUB_TOKEN en AI_API_KEY in via GitHub Codespaces secrets of een lokale .env."
     exit 0
   fi
   sleep 1
