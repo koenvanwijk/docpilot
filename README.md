@@ -4,6 +4,12 @@ Een **webgebaseerde, in-context Markdown-editor** die bestanden rechtstreeks uit
 
 Dit is een werkend **MVP voor persoonlijk / team-intern gebruik**, geen publieke SaaS. Frontend en server gebruiken uitsluitend Node.js 20+ en browser-JavaScript; **geen `npm install` nodig**. Voor de Markdown-rendering worden wel twee externe browserbibliotheken van jsDelivr geladen (Marked en DOMPurify).
 
+## GitHub-native revieweditor (zonder Pages of Codespaces)
+
+Wil je **Markdown rechtstreeks binnen GitHub reviewen**? Gebruik een Pull Request met GitHub's rich diff en de [DocPilot Markdown Reviewer agent](.github/agents/docpilot-review.agent.md), of laat GitHub Copilot meerdere reviewopmerkingen in één batch verwerken via **Add to batch → Fix and commit**. Er is ook een agentprofiel geïnstalleerd in de European Physical AI Operations-repository.
+
+**Gebruik:** [GitHub-native Markdown review](docs/github-native-review.md). Hiervoor heb je toegang tot de GitHub Copilot cloud agent nodig; het profiel voegt geen eigen knoppen toe aan github.com. Voor selectie van willekeurige tekst in gerenderde Markdown kan een browserextensie nodig zijn.
+
 ## Zonder lokale installatie: GitHub Codespaces
 
 [Start een Codespace](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=1446140440) in deze repository. De devcontainer start de DocPilot-backend automatisch met een private doorgestuurde poort (8787). Stel vooraf je Codespaces secrets `DOCPILOT_GITHUB_TOKEN` (Contents: read/write) en `AI_API_KEY` in; optioneel `AI_MODEL`. Haal in de Codespaces-terminal het automatisch gegenereerde app-wachtwoord op met `cat ~/.local/state/docpilot/app-password`.
